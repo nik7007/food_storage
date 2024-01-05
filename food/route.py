@@ -1,3 +1,5 @@
+from datetime import date
+
 from flask import Blueprint, current_app, request
 from marshmallow import ValidationError
 
@@ -8,10 +10,18 @@ from .model import FoodActionSchema
 food_route = Blueprint('food_route', __name__)
 
 
-@food_route.route('/', methods=['GET'])
+@food_route.route('', methods=['GET'])
 def food_lst() -> object:
     data = get_data()
     current_app.logger.info('Get all data: {0}'.format(data))
+    raw_expire_date = request.args.get('expire_date')
+    if raw_expire_date is not None:
+        expire_date = date.fromisoformat(raw_expire_date)
+        result = []
+        for d in data:
+            result = result + d.expired_foods(expire_date)
+        return to_json(result)
+
     return to_json(data)
 
 

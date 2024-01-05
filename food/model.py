@@ -1,4 +1,6 @@
 from datetime import date
+from typing import Self
+
 from marshmallow import Schema, fields, post_load
 
 
@@ -27,6 +29,13 @@ class Food(object):
             attr.quantity -= quantity
             if attr.quantity <= 0:
                 self.food_attributes.remove(attr)
+
+    def expired_foods(self, expire_date: date) -> list[Self]:
+        food_attributes = [FoodAttribute(attr.expire_date, attr.quantity) for attr in self.food_attributes if
+                           attr.expire_date <= expire_date]
+        if len(food_attributes) == 0:
+            return list()
+        return [Food(self.name, food_attributes)]
 
 
 # Schema for FoodAttribute class
