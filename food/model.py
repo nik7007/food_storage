@@ -51,3 +51,20 @@ class FoodSchema(Schema):
     @post_load
     def make_object(self, data, **kwargs):
         return Food(**data)
+
+
+class FoodAction(object):
+    def __init__(self, name: str, expire_date: date, quantity: int):
+        self.name = name
+        self.expire_date = expire_date
+        self.quantity = quantity
+
+
+class FoodActionSchema(Schema):
+    name = fields.Str()
+    expire_date = fields.Date()
+    quantity = fields.Int()
+
+    @post_load
+    def make_object(self, data, **kwargs):
+        return FoodAction(**data)

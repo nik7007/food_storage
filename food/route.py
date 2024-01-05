@@ -1,9 +1,9 @@
-from datetime import date
-
 from flask import Blueprint, current_app, request
+from marshmallow import ValidationError
 
 from core import ActionType
 from .data import get_data, add_food, to_json, remove_food, get_food
+from .model import FoodActionSchema
 
 food_route = Blueprint('food_route', __name__)
 
@@ -21,10 +21,17 @@ def food_action(action: ActionType):
     logger.info('Action: {0}'.format(action))
     data = request.get_json()
     logger.info('Got data: {0}'.format(data))
+    schema = FoodActionSchema()
+    try:
+        action_data = schema.load(data)
+    except ValidationError as e:
+        logger.error('Invalid data: {0}'.format(e.messages))
+        return '', 400
+
     if action == ActionType.ADD:
-        add_food(name=data['name'], expire_date=date.fromisoformat(data['expire_date']), quantity=data['quantity'])
+        add_food(**action_data.__dict__)
     if action == ActionType.REMOVE:
-        remove_food(name=data['name'], expire_date=date.fromisoformat(data['expire_date']), quantity=data['quantity'])
+        remove_food(**action_data.__dict__)
 
     try:
         food = get_food(name=data['name'])
