@@ -38,6 +38,13 @@ class Food(object):
         return [Food(self.name, food_attributes)]
 
 
+class FoodAction(object):
+    def __init__(self, name: str, expire_date: date, quantity: int):
+        self.name = name
+        self.expire_date = expire_date
+        self.quantity = quantity
+
+
 # Schema for FoodAttribute class
 class FoodAttributeSchema(Schema):
     # Fields should mirror attributes of FoodAttribute
@@ -60,13 +67,6 @@ class FoodSchema(Schema):
     @post_load
     def make_object(self, data, **kwargs):
         return Food(**data)
-
-
-class FoodAction(object):
-    def __init__(self, name: str, expire_date: date, quantity: int):
-        self.name = name
-        self.expire_date = expire_date
-        self.quantity = quantity
 
 
 class FoodActionSchema(Schema):

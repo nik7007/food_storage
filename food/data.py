@@ -2,6 +2,7 @@ import json
 import os
 from datetime import date
 
+from core import to_json_with_schema
 from .model import Food, FoodSchema
 
 FOOD_DATA_FILE = 'out/food_data.json'
@@ -32,9 +33,7 @@ def get_food(name: str) -> Food:
 
 
 def to_json(foods: list[Food] | Food) -> object:
-    many = type(foods) is list
-    schema = FoodSchema(many=many)
-    return schema.dump(foods)
+    return to_json_with_schema(foods, FoodSchema)
 
 
 def update_data(foods: list[Food]) -> None:
